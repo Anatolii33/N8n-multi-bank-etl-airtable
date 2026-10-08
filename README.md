@@ -4,9 +4,6 @@
 
 An n8n workflow that pulls transaction data from **two banks with different data formats**, normalizes it into one unified schema, enriches it with country data, and loads it into Airtable using **idempotent upserts** – so re-running the workflow never creates duplicates.
 
-![Workflow overview](<img width="1280" height="367" alt="1" src="https://github.com/user-attachments/assets/0dcf7eea-208e-446f-8cb6-1cfd8e4e78f1" />
-)
-
 ## The problem
 
 Every bank exports transactions in its own shape: different field names (`amount` vs `transaction_amount`), different date formats, country as a full name in one feed and as an ISO code in another. Before the data can be analysed, it has to be merged into one clean table.
