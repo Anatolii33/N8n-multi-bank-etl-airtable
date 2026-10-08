@@ -4,7 +4,7 @@
 
 An n8n workflow that pulls transaction data from **two banks with different data formats**, normalizes it into one unified schema, enriches it with country data, and loads it into Airtable using **idempotent upserts** – so re-running the workflow never creates duplicates.
 
-![Workflow overview](<img width="1287" height="370" alt="image" src="https://github.com/user-attachments/assets/45a643c1-4594-497b-b2a1-2b9faca82aa1" />
+![Workflow overview](<img width="1280" height="367" alt="1" src="https://github.com/user-attachments/assets/0dcf7eea-208e-446f-8cb6-1cfd8e4e78f1" />
 )
 
 ## The problem
