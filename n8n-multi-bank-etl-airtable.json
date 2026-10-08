@@ -1,0 +1,725 @@
+{
+  "name": "Multi-Bank Transactions ETL to Airtable",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        112
+      ],
+      "id": "08d9018d-675b-4576-aeff-696b0ce96807",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.mockaroo.com/api/YOUR_BANK_1_SCHEMA_ID",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "1000"
+            },
+            {
+              "name": "key",
+              "value": "YOUR_MOCKAROO_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        144,
+        -64
+      ],
+      "id": "300e215c-09ac-4c96-9f68-add7553d65ab",
+      "name": "Fetch Bank 1 Transactions"
+    },
+    {
+      "parameters": {
+        "url": "https://api.mockaroo.com/api/YOUR_BANK_2_SCHEMA_ID",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "1000"
+            },
+            {
+              "name": "key",
+              "value": "YOUR_MOCKAROO_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        128,
+        144
+      ],
+      "id": "0fe50a45-5d43-42d2-93b6-35edf1679549",
+      "name": "Fetch Bank 2 Transactions"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1104,
+        64
+      ],
+      "id": "4da50b32-926b-49f6-b114-a1d69c42097a",
+      "name": "Combine Banks"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2cd0751-3aac-4d9d-9eba-467ff59d5d27",
+              "name": "id",
+              "value": "={{ $json.transaction_id }}",
+              "type": "number"
+            },
+            {
+              "id": "244a9f42-041d-459a-b5f6-936a12dbccc4",
+              "name": "date",
+              "value": "={{ $json.transaction_date }}",
+              "type": "string"
+            },
+            {
+              "id": "9ea5add0-8264-46cf-9333-0b11d2ec94d3",
+              "name": "transaction_amount",
+              "value": "={{ $json.transaction_amount }}",
+              "type": "number"
+            },
+            {
+              "id": "80251cc7-04d6-438a-8711-e50998213989",
+              "name": "transaction_type",
+              "value": "={{ $json.transaction_type }}",
+              "type": "string"
+            },
+            {
+              "id": "7f78f18c-ec3c-4fed-b2c6-0329875317bc",
+              "name": "account_number",
+              "value": "={{ $json.account_number }}",
+              "type": "number"
+            },
+            {
+              "id": "8466fd6a-7167-44d7-9ecf-5544a83c7d2b",
+              "name": "merchant",
+              "value": "={{ $json.merchant_name }}",
+              "type": "string"
+            },
+            {
+              "id": "813de737-046c-415a-9fd4-9d3c32284f5f",
+              "name": "description",
+              "value": "={{ $json.transaction_description }}",
+              "type": "string"
+            },
+            {
+              "id": "aab0db39-3e35-4a53-bf81-8f6759a49813",
+              "name": "transaction_category",
+              "value": "={{ $json.transaction_category }}",
+              "type": "string"
+            },
+            {
+              "id": "64c6ac1d-c6ab-4451-bd46-62eadca680b9",
+              "name": "card_type",
+              "value": "={{ $json.card_type }}",
+              "type": "string"
+            },
+            {
+              "id": "028fba23-76b4-4992-a7b5-92fd2b58d1b6",
+              "name": "location",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "a5f681fa-ddc3-4b1a-9661-942999f5c518",
+              "name": "currency",
+              "value": "={{ $json.currency }}",
+              "type": "string"
+            },
+            {
+              "id": "d6007d6f-f6a4-4b1d-b6ac-b091368ea35f",
+              "name": "country_name",
+              "value": "={{ $json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "6c32f609-9c78-425b-810f-a645295ba976",
+              "name": "code",
+              "value": "={{ $json.code }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        752,
+        -48
+      ],
+      "id": "eb6090c4-4fef-49ae-8f85-3ac2a1d7fcd5",
+      "name": "Normalize Bank 1 Schema"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2cd0751-3aac-4d9d-9eba-467ff59d5d27",
+              "name": "id",
+              "value": "={{ $json.transaction_id }}",
+              "type": "number"
+            },
+            {
+              "id": "244a9f42-041d-459a-b5f6-936a12dbccc4",
+              "name": "date",
+              "value": "={{ $json.transaction_date.toDateTime().format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "9ea5add0-8264-46cf-9333-0b11d2ec94d3",
+              "name": "transaction_amount",
+              "value": "={{ $json.amount }}",
+              "type": "number"
+            },
+            {
+              "id": "80251cc7-04d6-438a-8711-e50998213989",
+              "name": "transaction_type",
+              "value": "={{ $json.transaction_type }}",
+              "type": "string"
+            },
+            {
+              "id": "7f78f18c-ec3c-4fed-b2c6-0329875317bc",
+              "name": "account_number",
+              "value": "={{ $json.account_number }}",
+              "type": "number"
+            },
+            {
+              "id": "8466fd6a-7167-44d7-9ecf-5544a83c7d2b",
+              "name": "merchant",
+              "value": "={{ $json.merchant_name }}",
+              "type": "string"
+            },
+            {
+              "id": "813de737-046c-415a-9fd4-9d3c32284f5f",
+              "name": "description",
+              "value": "={{ $json.transaction_description }}",
+              "type": "string"
+            },
+            {
+              "id": "aab0db39-3e35-4a53-bf81-8f6759a49813",
+              "name": "transaction_category",
+              "value": "={{ $json.transaction_category }}",
+              "type": "string"
+            },
+            {
+              "id": "64c6ac1d-c6ab-4451-bd46-62eadca680b9",
+              "name": "card_type",
+              "value": "={{ $json.card_type }}",
+              "type": "string"
+            },
+            {
+              "id": "028fba23-76b4-4992-a7b5-92fd2b58d1b6",
+              "name": "location",
+              "value": "={{ $json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "a5f681fa-ddc3-4b1a-9661-942999f5c518",
+              "name": "currency",
+              "value": "={{ $json.transaction_currency }}",
+              "type": "string"
+            },
+            {
+              "id": "6277c41f-c1e0-4dae-9740-a30255866c8d",
+              "name": "country_name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "2bfbe32f-3602-4661-98b5-715cc6905def",
+              "name": "code",
+              "value": "={{ $json.country_code }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        864,
+        240
+      ],
+      "id": "38fa85fc-0d45-49aa-ad4d-232d0a4e8791",
+      "name": "Normalize Bank 2 Schema"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.date }}",
+        "format": "yyyy-MM-dd",
+        "outputFieldName": "date",
+        "options": {
+          "includeInputFields": true
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -48
+      ],
+      "id": "99d6282b-ecf9-4ed5-9695-156c8ea1bcfe",
+      "name": "Format Date (Bank 1)"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"country list\": [\n    { \"name\": \"Afghanistan\", \"dial_code\": \"+93\", \"code\": \"AF\" },\n    { \"name\": \"Aland Islands\", \"dial_code\": \"+358\", \"code\": \"AX\" },\n    { \"name\": \"Albania\", \"dial_code\": \"+355\", \"code\": \"AL\" },\n    { \"name\": \"Algeria\", \"dial_code\": \"+213\", \"code\": \"DZ\" },\n    { \"name\": \"AmericanSamoa\", \"dial_code\": \"+1684\", \"code\": \"AS\" },\n    { \"name\": \"Andorra\", \"dial_code\": \"+376\", \"code\": \"AD\" },\n    { \"name\": \"Angola\", \"dial_code\": \"+244\", \"code\": \"AO\" },\n    { \"name\": \"Anguilla\", \"dial_code\": \"+1264\", \"code\": \"AI\" },\n    { \"name\": \"Antarctica\", \"dial_code\": \"+672\", \"code\": \"AQ\" },\n    { \"name\": \"Antigua and Barbuda\", \"dial_code\": \"+1268\", \"code\": \"AG\" },\n    { \"name\": \"Argentina\", \"dial_code\": \"+54\", \"code\": \"AR\" },\n    { \"name\": \"Armenia\", \"dial_code\": \"+374\", \"code\": \"AM\" },\n    { \"name\": \"Aruba\", \"dial_code\": \"+297\", \"code\": \"AW\" },\n    { \"name\": \"Australia\", \"dial_code\": \"+61\", \"code\": \"AU\" },\n    { \"name\": \"Austria\", \"dial_code\": \"+43\", \"code\": \"AT\" },\n    { \"name\": \"Azerbaijan\", \"dial_code\": \"+994\", \"code\": \"AZ\" },\n    { \"name\": \"Bahamas\", \"dial_code\": \"+1242\", \"code\": \"BS\" },\n    { \"name\": \"Bahrain\", \"dial_code\": \"+973\", \"code\": \"BH\" },\n    { \"name\": \"Bangladesh\", \"dial_code\": \"+880\", \"code\": \"BD\" },\n    { \"name\": \"Barbados\", \"dial_code\": \"+1246\", \"code\": \"BB\" },\n    { \"name\": \"Belarus\", \"dial_code\": \"+375\", \"code\": \"BY\" },\n    { \"name\": \"Belgium\", \"dial_code\": \"+32\", \"code\": \"BE\" },\n    { \"name\": \"Belize\", \"dial_code\": \"+501\", \"code\": \"BZ\" },\n    { \"name\": \"Benin\", \"dial_code\": \"+229\", \"code\": \"BJ\" },\n    { \"name\": \"Bermuda\", \"dial_code\": \"+1441\", \"code\": \"BM\" },\n    { \"name\": \"Bhutan\", \"dial_code\": \"+975\", \"code\": \"BT\" },\n    { \"name\": \"Bolivia, Plurinational State of\", \"dial_code\": \"+591\", \"code\": \"BO\" },\n    { \"name\": \"Bosnia and Herzegovina\", \"dial_code\": \"+387\", \"code\": \"BA\" },\n    { \"name\": \"Botswana\", \"dial_code\": \"+267\", \"code\": \"BW\" },\n    { \"name\": \"Brazil\", \"dial_code\": \"+55\", \"code\": \"BR\" },\n    { \"name\": \"British Indian Ocean Territory\", \"dial_code\": \"+246\", \"code\": \"IO\" },\n    { \"name\": \"Brunei Darussalam\", \"dial_code\": \"+673\", \"code\": \"BN\" },\n    { \"name\": \"Bulgaria\", \"dial_code\": \"+359\", \"code\": \"BG\" },\n    { \"name\": \"Burkina Faso\", \"dial_code\": \"+226\", \"code\": \"BF\" },\n    { \"name\": \"Burundi\", \"dial_code\": \"+257\", \"code\": \"BI\" },\n    { \"name\": \"Cambodia\", \"dial_code\": \"+855\", \"code\": \"KH\" },\n    { \"name\": \"Cameroon\", \"dial_code\": \"+237\", \"code\": \"CM\" },\n    { \"name\": \"Canada\", \"dial_code\": \"+1\", \"code\": \"CA\" },\n    { \"name\": \"Cape Verde\", \"dial_code\": \"+238\", \"code\": \"CV\" },\n    { \"name\": \"Cayman Islands\", \"dial_code\": \"+ 345\", \"code\": \"KY\" },\n    { \"name\": \"Central African Republic\", \"dial_code\": \"+236\", \"code\": \"CF\" },\n    { \"name\": \"Chad\", \"dial_code\": \"+235\", \"code\": \"TD\" },\n    { \"name\": \"Chile\", \"dial_code\": \"+56\", \"code\": \"CL\" },\n    { \"name\": \"China\", \"dial_code\": \"+86\", \"code\": \"CN\" },\n    { \"name\": \"Christmas Island\", \"dial_code\": \"+61\", \"code\": \"CX\" },\n    { \"name\": \"Cocos (Keeling) Islands\", \"dial_code\": \"+61\", \"code\": \"CC\" },\n    { \"name\": \"Colombia\", \"dial_code\": \"+57\", \"code\": \"CO\" },\n    { \"name\": \"Comoros\", \"dial_code\": \"+269\", \"code\": \"KM\" },\n    { \"name\": \"Congo\", \"dial_code\": \"+242\", \"code\": \"CG\" },\n    { \"name\": \"Congo, The Democratic Republic of the Congo\", \"dial_code\": \"+243\", \"code\": \"CD\" },\n    { \"name\": \"Cook Islands\", \"dial_code\": \"+682\", \"code\": \"CK\" },\n    { \"name\": \"Costa Rica\", \"dial_code\": \"+506\", \"code\": \"CR\" },\n    { \"name\": \"Cote d'Ivoire\", \"dial_code\": \"+225\", \"code\": \"CI\" },\n    { \"name\": \"Croatia\", \"dial_code\": \"+385\", \"code\": \"HR\" },\n    { \"name\": \"Cuba\", \"dial_code\": \"+53\", \"code\": \"CU\" },\n    { \"name\": \"Cyprus\", \"dial_code\": \"+357\", \"code\": \"CY\" },\n    { \"name\": \"Czech Republic\", \"dial_code\": \"+420\", \"code\": \"CZ\" },\n    { \"name\": \"Denmark\", \"dial_code\": \"+45\", \"code\": \"DK\" },\n    { \"name\": \"Djibouti\", \"dial_code\": \"+253\", \"code\": \"DJ\" },\n    { \"name\": \"Dominica\", \"dial_code\": \"+1767\", \"code\": \"DM\" },\n    { \"name\": \"Dominican Republic\", \"dial_code\": \"+1849\", \"code\": \"DO\" },\n    { \"name\": \"Ecuador\", \"dial_code\": \"+593\", \"code\": \"EC\" },\n    { \"name\": \"Egypt\", \"dial_code\": \"+20\", \"code\": \"EG\" },\n    { \"name\": \"El Salvador\", \"dial_code\": \"+503\", \"code\": \"SV\" },\n    { \"name\": \"Equatorial Guinea\", \"dial_code\": \"+240\", \"code\": \"GQ\" },\n    { \"name\": \"Eritrea\", \"dial_code\": \"+291\", \"code\": \"ER\" },\n    { \"name\": \"Estonia\", \"dial_code\": \"+372\", \"code\": \"EE\" },\n    { \"name\": \"Ethiopia\", \"dial_code\": \"+251\", \"code\": \"ET\" },\n    { \"name\": \"Falkland Islands (Malvinas)\", \"dial_code\": \"+500\", \"code\": \"FK\" },\n    { \"name\": \"Faroe Islands\", \"dial_code\": \"+298\", \"code\": \"FO\" },\n    { \"name\": \"Fiji\", \"dial_code\": \"+679\", \"code\": \"FJ\" },\n    { \"name\": \"Finland\", \"dial_code\": \"+358\", \"code\": \"FI\" },\n    { \"name\": \"France\", \"dial_code\": \"+33\", \"code\": \"FR\" },\n    { \"name\": \"French Guiana\", \"dial_code\": \"+594\", \"code\": \"GF\" },\n    { \"name\": \"French Polynesia\", \"dial_code\": \"+689\", \"code\": \"PF\" },\n    { \"name\": \"Gabon\", \"dial_code\": \"+241\", \"code\": \"GA\" },\n    { \"name\": \"Gambia\", \"dial_code\": \"+220\", \"code\": \"GM\" },\n    { \"name\": \"Georgia\", \"dial_code\": \"+995\", \"code\": \"GE\" },\n    { \"name\": \"Germany\", \"dial_code\": \"+49\", \"code\": \"DE\" },\n    { \"name\": \"Ghana\", \"dial_code\": \"+233\", \"code\": \"GH\" },\n    { \"name\": \"Gibraltar\", \"dial_code\": \"+350\", \"code\": \"GI\" },\n    { \"name\": \"Greece\", \"dial_code\": \"+30\", \"code\": \"GR\" },\n    { \"name\": \"Greenland\", \"dial_code\": \"+299\", \"code\": \"GL\" },\n    { \"name\": \"Grenada\", \"dial_code\": \"+1473\", \"code\": \"GD\" },\n    { \"name\": \"Guadeloupe\", \"dial_code\": \"+590\", \"code\": \"GP\" },\n    { \"name\": \"Guam\", \"dial_code\": \"+1671\", \"code\": \"GU\" },\n    { \"name\": \"Guatemala\", \"dial_code\": \"+502\", \"code\": \"GT\" },\n    { \"name\": \"Guernsey\", \"dial_code\": \"+44\", \"code\": \"GG\" },\n    { \"name\": \"Guinea\", \"dial_code\": \"+224\", \"code\": \"GN\" },\n    { \"name\": \"Guinea-Bissau\", \"dial_code\": \"+245\", \"code\": \"GW\" },\n    { \"name\": \"Guyana\", \"dial_code\": \"+595\", \"code\": \"GY\" },\n    { \"name\": \"Haiti\", \"dial_code\": \"+509\", \"code\": \"HT\" },\n    { \"name\": \"Holy See (Vatican City State)\", \"dial_code\": \"+379\", \"code\": \"VA\" },\n    { \"name\": \"Honduras\", \"dial_code\": \"+504\", \"code\": \"HN\" },\n    { \"name\": \"Hong Kong\", \"dial_code\": \"+852\", \"code\": \"HK\" },\n    { \"name\": \"Hungary\", \"dial_code\": \"+36\", \"code\": \"HU\" },\n    { \"name\": \"Iceland\", \"dial_code\": \"+354\", \"code\": \"IS\" },\n    { \"name\": \"India\", \"dial_code\": \"+91\", \"code\": \"IN\" },\n    { \"name\": \"Indonesia\", \"dial_code\": \"+62\", \"code\": \"ID\" },\n    { \"name\": \"Iran, Islamic Republic of Persian Gulf\", \"dial_code\": \"+98\", \"code\": \"IR\" },\n    { \"name\": \"Iraq\", \"dial_code\": \"+964\", \"code\": \"IQ\" },\n    { \"name\": \"Ireland\", \"dial_code\": \"+353\", \"code\": \"IE\" },\n    { \"name\": \"Isle of Man\", \"dial_code\": \"+44\", \"code\": \"IM\" },\n    { \"name\": \"Israel\", \"dial_code\": \"+972\", \"code\": \"IL\" },\n    { \"name\": \"Italy\", \"dial_code\": \"+39\", \"code\": \"IT\" },\n    { \"name\": \"Jamaica\", \"dial_code\": \"+1876\", \"code\": \"JM\" },\n    { \"name\": \"Japan\", \"dial_code\": \"+81\", \"code\": \"JP\" },\n    { \"name\": \"Jersey\", \"dial_code\": \"+44\", \"code\": \"JE\" },\n    { \"name\": \"Jordan\", \"dial_code\": \"+962\", \"code\": \"JO\" },\n    { \"name\": \"Kazakhstan\", \"dial_code\": \"+77\", \"code\": \"KZ\" },\n    { \"name\": \"Kenya\", \"dial_code\": \"+254\", \"code\": \"KE\" },\n    { \"name\": \"Kiribati\", \"dial_code\": \"+686\", \"code\": \"KI\" },\n    { \"name\": \"Korea, Democratic People's Republic of Korea\", \"dial_code\": \"+850\", \"code\": \"KP\" },\n    { \"name\": \"Korea, Republic of South Korea\", \"dial_code\": \"+82\", \"code\": \"KR\" },\n    { \"name\": \"Kuwait\", \"dial_code\": \"+965\", \"code\": \"KW\" },\n    { \"name\": \"Kyrgyzstan\", \"dial_code\": \"+996\", \"code\": \"KG\" },\n    { \"name\": \"Laos\", \"dial_code\": \"+856\", \"code\": \"LA\" },\n    { \"name\": \"Latvia\", \"dial_code\": \"+371\", \"code\": \"LV\" },\n    { \"name\": \"Lebanon\", \"dial_code\": \"+961\", \"code\": \"LB\" },\n    { \"name\": \"Lesotho\", \"dial_code\": \"+266\", \"code\": \"LS\" },\n    { \"name\": \"Liberia\", \"dial_code\": \"+231\", \"code\": \"LR\" },\n    { \"name\": \"Libyan Arab Jamahiriya\", \"dial_code\": \"+218\", \"code\": \"LY\" },\n    { \"name\": \"Liechtenstein\", \"dial_code\": \"+423\", \"code\": \"LI\" },\n    { \"name\": \"Lithuania\", \"dial_code\": \"+370\", \"code\": \"LT\" },\n    { \"name\": \"Luxembourg\", \"dial_code\": \"+352\", \"code\": \"LU\" },\n    { \"name\": \"Macao\", \"dial_code\": \"+853\", \"code\": \"MO\" },\n    { \"name\": \"Macedonia\", \"dial_code\": \"+389\", \"code\": \"MK\" },\n    { \"name\": \"Madagascar\", \"dial_code\": \"+261\", \"code\": \"MG\" },\n    { \"name\": \"Malawi\", \"dial_code\": \"+265\", \"code\": \"MW\" },\n    { \"name\": \"Malaysia\", \"dial_code\": \"+60\", \"code\": \"MY\" },\n    { \"name\": \"Maldives\", \"dial_code\": \"+960\", \"code\": \"MV\" },\n    { \"name\": \"Mali\", \"dial_code\": \"+223\", \"code\": \"ML\" },\n    { \"name\": \"Malta\", \"dial_code\": \"+356\", \"code\": \"MT\" },\n    { \"name\": \"Marshall Islands\", \"dial_code\": \"+692\", \"code\": \"MH\" },\n    { \"name\": \"Martinique\", \"dial_code\": \"+596\", \"code\": \"MQ\" },\n    { \"name\": \"Mauritania\", \"dial_code\": \"+222\", \"code\": \"MR\" },\n    { \"name\": \"Mauritius\", \"dial_code\": \"+230\", \"code\": \"MU\" },\n    { \"name\": \"Mayotte\", \"dial_code\": \"+262\", \"code\": \"YT\" },\n    { \"name\": \"Mexico\", \"dial_code\": \"+52\", \"code\": \"MX\" },\n    { \"name\": \"Micronesia, Federated States of Micronesia\", \"dial_code\": \"+691\", \"code\": \"FM\" },\n    { \"name\": \"Moldova\", \"dial_code\": \"+373\", \"code\": \"MD\" },\n    { \"name\": \"Monaco\", \"dial_code\": \"+377\", \"code\": \"MC\" },\n    { \"name\": \"Mongolia\", \"dial_code\": \"+976\", \"code\": \"MN\" },\n    { \"name\": \"Montenegro\", \"dial_code\": \"+382\", \"code\": \"ME\" },\n    { \"name\": \"Montserrat\", \"dial_code\": \"+1664\", \"code\": \"MS\" },\n    { \"name\": \"Morocco\", \"dial_code\": \"+212\", \"code\": \"MA\" },\n    { \"name\": \"Mozambique\", \"dial_code\": \"+258\", \"code\": \"MZ\" },\n    { \"name\": \"Myanmar\", \"dial_code\": \"+95\", \"code\": \"MM\" },\n    { \"name\": \"Namibia\", \"dial_code\": \"+264\", \"code\": \"NA\" },\n    { \"name\": \"Nauru\", \"dial_code\": \"+674\", \"code\": \"NR\" },\n    { \"name\": \"Nepal\", \"dial_code\": \"+977\", \"code\": \"NP\" },\n    { \"name\": \"Netherlands\", \"dial_code\": \"+31\", \"code\": \"NL\" },\n    { \"name\": \"Netherlands Antilles\", \"dial_code\": \"+599\", \"code\": \"AN\" },\n    { \"name\": \"New Caledonia\", \"dial_code\": \"+687\", \"code\": \"NC\" },\n    { \"name\": \"New Zealand\", \"dial_code\": \"+64\", \"code\": \"NZ\" },\n    { \"name\": \"Nicaragua\", \"dial_code\": \"+505\", \"code\": \"NI\" },\n    { \"name\": \"Niger\", \"dial_code\": \"+227\", \"code\": \"NE\" },\n    { \"name\": \"Nigeria\", \"dial_code\": \"+234\", \"code\": \"NG\" },\n    { \"name\": \"Niue\", \"dial_code\": \"+683\", \"code\": \"NU\" },\n    { \"name\": \"Norfolk Island\", \"dial_code\": \"+672\", \"code\": \"NF\" },\n    { \"name\": \"Northern Mariana Islands\", \"dial_code\": \"+1670\", \"code\": \"MP\" },\n    { \"name\": \"Norway\", \"dial_code\": \"+47\", \"code\": \"NO\" },\n    { \"name\": \"Oman\", \"dial_code\": \"+968\", \"code\": \"OM\" },\n    { \"name\": \"Pakistan\", \"dial_code\": \"+92\", \"code\": \"PK\" },\n    { \"name\": \"Palau\", \"dial_code\": \"+680\", \"code\": \"PW\" },\n    { \"name\": \"Palestinian Territory, Occupied\", \"dial_code\": \"+970\", \"code\": \"PS\" },\n    { \"name\": \"Panama\", \"dial_code\": \"+507\", \"code\": \"PA\" },\n    { \"name\": \"Papua New Guinea\", \"dial_code\": \"+675\", \"code\": \"PG\" },\n    { \"name\": \"Paraguay\", \"dial_code\": \"+595\", \"code\": \"PY\" },\n    { \"name\": \"Peru\", \"dial_code\": \"+51\", \"code\": \"PE\" },\n    { \"name\": \"Philippines\", \"dial_code\": \"+63\", \"code\": \"PH\" },\n    { \"name\": \"Pitcairn\", \"dial_code\": \"+872\", \"code\": \"PN\" },\n    { \"name\": \"Poland\", \"dial_code\": \"+48\", \"code\": \"PL\" },\n    { \"name\": \"Portugal\", \"dial_code\": \"+351\", \"code\": \"PT\" },\n    { \"name\": \"Puerto Rico\", \"dial_code\": \"+1939\", \"code\": \"PR\" },\n    { \"name\": \"Qatar\", \"dial_code\": \"+974\", \"code\": \"QA\" },\n    { \"name\": \"Romania\", \"dial_code\": \"+40\", \"code\": \"RO\" },\n    { \"name\": \"Russia\", \"dial_code\": \"+7\", \"code\": \"RU\" },\n    { \"name\": \"Rwanda\", \"dial_code\": \"+250\", \"code\": \"RW\" },\n    { \"name\": \"Reunion\", \"dial_code\": \"+262\", \"code\": \"RE\" },\n    { \"name\": \"Saint Barthelemy\", \"dial_code\": \"+590\", \"code\": \"BL\" },\n    { \"name\": \"Saint Helena, Ascension and Tristan Da Cunha\", \"dial_code\": \"+290\", \"code\": \"SH\" },\n    { \"name\": \"Saint Kitts and Nevis\", \"dial_code\": \"+1869\", \"code\": \"KN\" },\n    { \"name\": \"Saint Lucia\", \"dial_code\": \"+1758\", \"code\": \"LC\" },\n    { \"name\": \"Saint Martin\", \"dial_code\": \"+590\", \"code\": \"MF\" },\n    { \"name\": \"Saint Pierre and Miquelon\", \"dial_code\": \"+508\", \"code\": \"PM\" },\n    { \"name\": \"Saint Vincent and the Grenadines\", \"dial_code\": \"+1784\", \"code\": \"VC\" },\n    { \"name\": \"Samoa\", \"dial_code\": \"+685\", \"code\": \"WS\" },\n    { \"name\": \"San Marino\", \"dial_code\": \"+378\", \"code\": \"SM\" },\n    { \"name\": \"Sao Tome and Principe\", \"dial_code\": \"+239\", \"code\": \"ST\" },\n    { \"name\": \"Saudi Arabia\", \"dial_code\": \"+966\", \"code\": \"SA\" },\n    { \"name\": \"Senegal\", \"dial_code\": \"+221\", \"code\": \"SN\" },\n    { \"name\": \"Serbia\", \"dial_code\": \"+381\", \"code\": \"RS\" },\n    { \"name\": \"Seychelles\", \"dial_code\": \"+248\", \"code\": \"SC\" },\n    { \"name\": \"Sierra Leone\", \"dial_code\": \"+232\", \"code\": \"SL\" },\n    { \"name\": \"Singapore\", \"dial_code\": \"+65\", \"code\": \"SG\" },\n    { \"name\": \"Slovakia\", \"dial_code\": \"+421\", \"code\": \"SK\" },\n    { \"name\": \"Slovenia\", \"dial_code\": \"+386\", \"code\": \"SI\" },\n    { \"name\": \"Solomon Islands\", \"dial_code\": \"+677\", \"code\": \"SB\" },\n    { \"name\": \"Somalia\", \"dial_code\": \"+252\", \"code\": \"SO\" },\n    { \"name\": \"South Africa\", \"dial_code\": \"+27\", \"code\": \"ZA\" },\n    { \"name\": \"South Sudan\", \"dial_code\": \"+211\", \"code\": \"SS\" },\n    { \"name\": \"South Georgia and the South Sandwich Islands\", \"dial_code\": \"+500\", \"code\": \"GS\" },\n    { \"name\": \"Spain\", \"dial_code\": \"+34\", \"code\": \"ES\" },\n    { \"name\": \"Sri Lanka\", \"dial_code\": \"+94\", \"code\": \"LK\" },\n    { \"name\": \"Sudan\", \"dial_code\": \"+249\", \"code\": \"SD\" },\n    { \"name\": \"Suriname\", \"dial_code\": \"+597\", \"code\": \"SR\" },\n    { \"name\": \"Svalbard and Jan Mayen\", \"dial_code\": \"+47\", \"code\": \"SJ\" },\n    { \"name\": \"Swaziland\", \"dial_code\": \"+268\", \"code\": \"SZ\" },\n    { \"name\": \"Sweden\", \"dial_code\": \"+46\", \"code\": \"SE\" },\n    { \"name\": \"Switzerland\", \"dial_code\": \"+41\", \"code\": \"CH\" },\n    { \"name\": \"Syrian Arab Republic\", \"dial_code\": \"+963\", \"code\": \"SY\" },\n    { \"name\": \"Taiwan\", \"dial_code\": \"+886\", \"code\": \"TW\" },\n    { \"name\": \"Tajikistan\", \"dial_code\": \"+992\", \"code\": \"TJ\" },\n    { \"name\": \"Tanzania, United Republic of Tanzania\", \"dial_code\": \"+255\", \"code\": \"TZ\" },\n    { \"name\": \"Thailand\", \"dial_code\": \"+66\", \"code\": \"TH\" },\n    { \"name\": \"Timor-Leste\", \"dial_code\": \"+670\", \"code\": \"TL\" },\n    { \"name\": \"Togo\", \"dial_code\": \"+228\", \"code\": \"TG\" },\n    { \"name\": \"Tokelau\", \"dial_code\": \"+690\", \"code\": \"TK\" },\n    { \"name\": \"Tonga\", \"dial_code\": \"+676\", \"code\": \"TO\" },\n    { \"name\": \"Trinidad and Tobago\", \"dial_code\": \"+1868\", \"code\": \"TT\" },\n    { \"name\": \"Tunisia\", \"dial_code\": \"+216\", \"code\": \"TN\" },\n    { \"name\": \"Turkey\", \"dial_code\": \"+90\", \"code\": \"TR\" },\n    { \"name\": \"Turkmenistan\", \"dial_code\": \"+993\", \"code\": \"TM\" },\n    { \"name\": \"Turks and Caicos Islands\", \"dial_code\": \"+1649\", \"code\": \"TC\" },\n    { \"name\": \"Tuvalu\", \"dial_code\": \"+688\", \"code\": \"TV\" },\n    { \"name\": \"Uganda\", \"dial_code\": \"+256\", \"code\": \"UG\" },\n    { \"name\": \"Ukraine\", \"dial_code\": \"+380\", \"code\": \"UA\" },\n    { \"name\": \"United Arab Emirates\", \"dial_code\": \"+971\", \"code\": \"AE\" },\n    { \"name\": \"United Kingdom\", \"dial_code\": \"+44\", \"code\": \"GB\" },\n    { \"name\": \"United States\", \"dial_code\": \"+1\", \"code\": \"US\" },\n    { \"name\": \"Uruguay\", \"dial_code\": \"+598\", \"code\": \"UY\" },\n    { \"name\": \"Uzbekistan\", \"dial_code\": \"+998\", \"code\": \"UZ\" },\n    { \"name\": \"Vanuatu\", \"dial_code\": \"+678\", \"code\": \"VU\" },\n    { \"name\": \"Venezuela, Bolivarian Republic of Venezuela\", \"dial_code\": \"+58\", \"code\": \"VE\" },\n    { \"name\": \"Vietnam\", \"dial_code\": \"+84\", \"code\": \"VN\" },\n    { \"name\": \"Virgin Islands, British\", \"dial_code\": \"+1284\", \"code\": \"VG\" },\n    { \"name\": \"Virgin Islands, U.S.\", \"dial_code\": \"+1340\", \"code\": \"VI\" },\n    { \"name\": \"Wallis and Futuna\", \"dial_code\": \"+681\", \"code\": \"WF\" },\n    { \"name\": \"Yemen\", \"dial_code\": \"+967\", \"code\": \"YE\" },\n    { \"name\": \"Zambia\", \"dial_code\": \"+260\", \"code\": \"ZM\" },\n    { \"name\": \"Zimbabwe\", \"dial_code\": \"+263\", \"code\": \"ZW\" }\n  ]\n}",
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        16,
+        320
+      ],
+      "id": "0fec89c3-b9e1-44e0-8d44-55fd32f2fb5f",
+      "name": "Country Reference List"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['country list']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        224,
+        320
+      ],
+      "id": "be203324-17b8-484b-85a2-60ce4f2cb492",
+      "name": "Split Countries",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "country_code",
+              "field2": "code"
+            }
+          ]
+        },
+        "joinMode": "enrichInput1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        304
+      ],
+      "id": "9349e829-2969-4169-bde9-794f567386a2",
+      "name": "Add Country Name (Bank 2)"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "country",
+              "field2": "name"
+            }
+          ]
+        },
+        "joinMode": "enrichInput1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        528,
+        -48
+      ],
+      "id": "12746a42-e236-4dd1-9587-0c9fc7c5861c",
+      "name": "Add Country Code (Bank 1)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8db90c94-d47e-4334-971b-c75f88056bf4",
+              "name": "uuid",
+              "value": "={{ $json.id }}_{{ $json.country_name }}_{{ $json.currency }}_{{ $json.account_number }}_{{ $json.merchant }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1312,
+        64
+      ],
+      "id": "3ff7e4c3-765f-4da7-814f-5702023b38cb",
+      "name": "Generate Unique Key"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://api.airtable.com/v0/YOUR_AIRTABLE_BASE_ID/YOUR_AIRTABLE_TABLE_ID",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"typecast\":true,\n    \"performUpsert\": {\n      \"fieldsToMergeOn\": [\n        \"uuid\"\n      ]\n    },\n    \"records\": {{ $json.records.toJsonString() }}\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2704,
+        80
+      ],
+      "id": "2f26a0f9-a118-4808-8468-288d15acb7d7",
+      "name": "Upsert to Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Airtable Personal Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        80
+      ],
+      "id": "4183f5eb-eb29-4ac1-886f-6200e13c222a",
+      "name": "Build Records Array"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6eed9a78-a22e-4496-9264-a9db60bb3b27",
+              "name": "fields",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1952,
+        80
+      ],
+      "id": "2ee1e41f-ec06-431b-9aba-29142812eeb7",
+      "name": "Wrap in Fields"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        64
+      ],
+      "id": "9594eeea-9c8b-440d-9054-e017e2b934b8",
+      "name": "Loop in Batches of 10"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        80
+      ],
+      "id": "aac3b10f-f91e-4d78-94a5-ce71964292b5",
+      "name": "Wait (Rate Limit)"
+    },
+    {
+      "parameters": {
+        "maxItems": 100
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        64
+      ],
+      "id": "ed4d7465-83ef-4ae5-ace1-3633f505399e",
+      "name": "Limit Records"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Bank 1 Transactions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Bank 2 Transactions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Country Reference List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Bank 2 Transactions": {
+      "main": [
+        [
+          {
+            "node": "Add Country Name (Bank 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Bank 1 Transactions": {
+      "main": [
+        [
+          {
+            "node": "Add Country Code (Bank 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Banks": {
+      "main": [
+        [
+          {
+            "node": "Generate Unique Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Bank 1 Schema": {
+      "main": [
+        [
+          {
+            "node": "Format Date (Bank 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Bank 2 Schema": {
+      "main": [
+        [
+          {
+            "node": "Combine Banks",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Format Date (Bank 1)": {
+      "main": [
+        [
+          {
+            "node": "Combine Banks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Country Reference List": {
+      "main": [
+        [
+          {
+            "node": "Split Countries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Countries": {
+      "main": [
+        [
+          {
+            "node": "Add Country Name (Bank 2)",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Add Country Code (Bank 1)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Add Country Name (Bank 2)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Bank 2 Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Country Code (Bank 1)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Bank 1 Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Unique Key": {
+      "main": [
+        [
+          {
+            "node": "Limit Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wrap in Fields": {
+      "main": [
+        [
+          {
+            "node": "Build Records Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Records Array": {
+      "main": [
+        [
+          {
+            "node": "Wait (Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop in Batches of 10": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wrap in Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert to Airtable": {
+      "main": [
+        [
+          {
+            "node": "Loop in Batches of 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "Upsert to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit Records": {
+      "main": [
+        [
+          {
+            "node": "Loop in Batches of 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
