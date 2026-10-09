@@ -1,7 +1,5 @@
 # Multi-Bank Transactions ETL to Airtable (n8n)
 
-🇺🇦 [Українською](README.uk.md)
-
 An n8n workflow that pulls transaction data from **two banks with different data formats**, normalizes it into one unified schema, enriches it with country data, and loads it into Airtable using **idempotent upserts** – so re-running the workflow never creates duplicates.
 
 ## The problem
